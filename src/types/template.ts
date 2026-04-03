@@ -1,0 +1,141 @@
+import * as z from "zod";
+
+export const JsonValueSchema: z.ZodType = z.lazy(() =>
+  z.union([z.string(), z.number(), z.boolean(), z.null()]),
+);
+
+export const StepConditionSchema = z.object({
+  variable: z.string(), // The name of the variable to check the condition against, should reference a variable defined in the template's variables array
+  operator: z.enum(["eq", "neq", "gt", "lt", "gte", "lte"]), // The operator to use for the condition (e.g., "eq" for equals, "neq" for not equals, "gt" for greater than, etc.)
+  value: JsonValueSchema, // The value to compare the variable against, should be of the same type as the variable being checked
+});
+
+export const VariableTypeSchema = z.enum([
+  "string",
+  "number",
+  "boolean",
+  "select",
+]); // The variable types that can be prompted for
+
+export const VariableSchema = z.object({
+  name: z.string(), // The name of the variable by which it can be referenced later in the template
+  type: VariableTypeSchema, // The type of the variable, used to determine how to prompt the user for input (e.g., "string", "number", "boolean", "select", etc.)
+  message: z.string(), // The message to display when prompting the user for input for this variable
+  default: z.string().optional(), // An optional default value for the variable
+  required: z.boolean(), // Whether the user must provide a value when prompted
+  options: z.array(JsonValueSchema).optional(), // An array of option for the select variable type, should only be provided if the variable type is "select", will be ignored otherwhise
+});
+
+// A Step to execute shell commands
+export const RunStepSchema = z.object({
+  // Common properties for all step types
+  type: z.literal("run"), // Defines what kind of step it is
+  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+
+  // Unique properties for the "run" step type
+  command: z.string(), // The command to run, is only the first word, so no arguments (e.g., "npm", "git", etc.)
+  args: z.array(z.string()), // The arguments to pass to the command (e.g., ["install", "zod"])
+  cwd: z.string().optional(), // The directory to run the command in relative to the project root, if not provided it will run in the root of the project
+});
+
+// A Step to write files to the file system. Will create the file if it doesn't exist and overwrite it if it does exist
+export const WriteStepSchema = z.object({
+  // Common properties for all step types
+  type: z.literal("write"), // Defines what kind of step it is
+  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+
+  // Unique properties for the "write" step type
+  path: z.string(), // The path to the file to write, relative to the project root
+  content: z.string(), // The content to write to the file
+});
+
+// A Step to edit text in a file
+export const PatchTextStepSchema = z.object({
+  // Common properties for all step types
+  type: z.literal("patch-text"), // Defines what kind of step it is
+  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+
+  // Unique properties for the "patch-text" step type
+  path: z.string(), // The path to the file to patch, relative to the project root
+  operation: z.enum([
+    "replace",
+    "insert-after",
+    "insert-before",
+    "append",
+    "prepend",
+  ]), // The operation to perform on the file. Replace can be used to delete the part as well
+  find: z.string(), // The text to find in the file to determine where to apply the patch. The operation will be applied to all instances of the found text in the file
+  content: z.string(), // The content to use for the patch, use empty string and replace to remove the found text
+});
+
+// A Step to edit JSON files (usefull for config files)
+export const PatchJsonStepSchema = z.object({
+  // Common properties for all step types
+  type: z.literal("patch-json"), // Defines what kind of step it is
+  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+
+  // Unique properties for the "patch-json" step type
+  path: z.string(), // The path to the JSON file to patch, relative to the project root
+  operation: z.enum(["set", "append", "remove"]), // The operation to perform on the JSON file.
+  // set: set the value the the defined path, removing anything that was there before, will create the path if it doesn't exist.
+  // append: only works if the value at the defined path is an array, will append the provided value to the array, will create the array if it doesn't exist.
+  // remove: will remove the value at the defined path
+  jsonPath: z.array(z.string()), // The path to the value relative to the root of the json file as an array (e.g., compilerOptions.paths -> ["compilerOptions", "paths"])
+  value: JsonValueSchema.optional(), // The value to use for the patch, required for "set" and "append" operations, will be ignored for "remove" operation
+});
+
+// A Step to clone a git repository
+export const CloneStepSchema = z.object({
+  // Common properties for all step types
+  type: z.literal("clone"), // Defines what kind of step it is
+  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+
+  // Unique properties for the "clone" step type
+  repository: z.string(), // The URL of the git repository to clone
+  branch: z.string().optional(), // The branch to clone, if not provided it will clone the default branch
+  destination: z.string().optional(), // The path to the directory to clone the repository into, relative to the project root, will default to project root
+});
+
+// A Step to copy a specific file from a github repo
+export const CopyGithubFileStepSchema = z.object({
+  // Common properties for all step types
+  type: z.literal("copy-github-file"), // Defines what kind of step it is
+  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+
+  // Unique properties for the "copy-github-file" step type
+  repository: z.string(), // The repo to copy from ("user/repo")
+  branch: z.string().optional(), // The branch to copy from, if not provided it will copy from the default branch
+  filePath: z.string(), // The path to the file to copy
+  destination: z.string(), // The path to the file to copy to, relative to the project root
+});
+
+export const StepSchema = z.discriminatedUnion("type", [
+  RunStepSchema,
+  WriteStepSchema,
+  PatchTextStepSchema,
+  PatchJsonStepSchema,
+  CloneStepSchema,
+  CopyGithubFileStepSchema,
+]);
+
+export const TemplateSchema = z.object({
+  id: z.string(), // Used to identify the template when running the command (projgen create <template-id>)
+  name: z.string(), // Display name, should be a human-friendly version of the id
+  description: z.string(), // A short description of the template
+  version: z.string(), // The version of the template, should follow semantic versioning (e.g., "1.0.0")
+  variables: z.array(VariableSchema), // Defines the variables that can be used in the template and are prompted for when running the create command
+  steps: z.array(StepSchema), // Defines the steps to execute to scaffold the project with the template
+});
+
+export type JsonValue = z.infer<typeof JsonValueSchema>;
+export type StepCondition = z.infer<typeof StepConditionSchema>;
+export type VariableType = z.infer<typeof VariableTypeSchema>;
+export type Variable = z.infer<typeof VariableSchema>;
+export type RunStep = z.infer<typeof RunStepSchema>;
+export type WriteStep = z.infer<typeof WriteStepSchema>;
+export type PatchTextStep = z.infer<typeof PatchTextStepSchema>;
+export type PatchJsonStep = z.infer<typeof PatchJsonStepSchema>;
+export type CloneStep = z.infer<typeof CloneStepSchema>;
+export type CopyGithubFileStep = z.infer<typeof CopyGithubFileStepSchema>;
+export type Step = z.infer<typeof StepSchema>;
+export type Template = z.infer<typeof TemplateSchema>;
