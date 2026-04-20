@@ -10,13 +10,47 @@ export const StepConditionSchema = z.object({
   value: JsonValueSchema, // The value to compare the variable against, should be of the same type as the variable being checked
 });
 
-export const VariableTypeSchema = z.enum([
-  "string",
-  "number",
-  "boolean",
-  "select",
-]); // The variable types that can be prompted for
+export const baseVariableSchema = z.object({
+  name: z.string(), // The name of the variable by which it can be referenced later in the template
+  message: z.string(), // The message to display when prompting the user for input for this variable
+});
 
+// The Schema for a string variable
+export const stringVariableSchema = baseVariableSchema.safeExtend({
+  type: z.literal("string"), // The type of the variable, used to determine how to prompt the user for input
+  default: z.string().optional(), // An optional default value for the variable
+  required: z.boolean(), // Whether the user must provide a value when prompted
+});
+
+// The Schema for a number variable
+export const numberVariableSchema = baseVariableSchema.safeExtend({
+  type: z.literal("number"), // The type of the variable, used to determine how to prompt the user for input
+  default: z.number().optional(), // An optional default value for the variable
+  required: z.boolean(), // Whether the user must provide a value when prompted
+});
+
+// The Schema for a boolean variable
+export const booleanVariableSchema = baseVariableSchema.safeExtend({
+  type: z.literal("boolean"), // The type of the variable, used to determine how to prompt the user for input
+  default: z.boolean().optional(), // An optional default value for the variable
+});
+
+// The Schema for a select variable
+export const selectVariableSchema = baseVariableSchema.safeExtend({
+  type: z.literal("select"), // The type of the variable, used to determine how to prompt the user for input
+  required: z.boolean(), // Whether the user must provide a value when prompted
+  options: z.array(z.union([z.string(), z.number()])), // An array of option for the select variable type, should only be provided if the variable type is "select", will be ignored otherwhise
+  multible: z.boolean().optional(), // Whether the user can select multiple options
+});
+
+export const VariableSchema = z.discriminatedUnion("type", [
+  stringVariableSchema,
+  numberVariableSchema,
+  booleanVariableSchema,
+  selectVariableSchema,
+]);
+
+/*
 export const VariableSchema = z.object({
   name: z.string(), // The name of the variable by which it can be referenced later in the template
   type: VariableTypeSchema, // The type of the variable, used to determine how to prompt the user for input (e.g., "string", "number", "boolean", "select", etc.)
@@ -25,6 +59,7 @@ export const VariableSchema = z.object({
   required: z.boolean(), // Whether the user must provide a value when prompted
   options: z.array(JsonValueSchema).optional(), // An array of option for the select variable type, should only be provided if the variable type is "select", will be ignored otherwhise
 });
+*/
 
 // A Step to execute shell commands
 export const RunStepSchema = z.object({
@@ -127,15 +162,21 @@ export const TemplateSchema = z.object({
   steps: z.array(StepSchema), // Defines the steps to execute to scaffold the project with the template
 });
 
-export type JsonValue = z.infer<typeof JsonValueSchema>;
-export type StepCondition = z.infer<typeof StepConditionSchema>;
-export type VariableType = z.infer<typeof VariableTypeSchema>;
+export type Template = z.infer<typeof TemplateSchema>;
+
 export type Variable = z.infer<typeof VariableSchema>;
+export type StringVariable = z.infer<typeof stringVariableSchema>;
+export type NumberVariable = z.infer<typeof numberVariableSchema>;
+export type BooleanVariable = z.infer<typeof booleanVariableSchema>;
+export type SelectVariable = z.infer<typeof selectVariableSchema>;
+
+export type Step = z.infer<typeof StepSchema>;
+export type StepCondition = z.infer<typeof StepConditionSchema>;
 export type RunStep = z.infer<typeof RunStepSchema>;
 export type WriteStep = z.infer<typeof WriteStepSchema>;
 export type PatchTextStep = z.infer<typeof PatchTextStepSchema>;
 export type PatchJsonStep = z.infer<typeof PatchJsonStepSchema>;
 export type CloneStep = z.infer<typeof CloneStepSchema>;
 export type CopyGithubFileStep = z.infer<typeof CopyGithubFileStepSchema>;
-export type Step = z.infer<typeof StepSchema>;
-export type Template = z.infer<typeof TemplateSchema>;
+
+export type JsonValue = z.infer<typeof JsonValueSchema>;
