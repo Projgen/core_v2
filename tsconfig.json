@@ -41,6 +41,8 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true
   }
 }
