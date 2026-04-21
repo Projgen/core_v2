@@ -1,0 +1,8 @@
+{
+  "id": "example-template",
+  "name": "Example Template",
+  "description": "Minimal valid template",
+  "version": "1.0.0",
+  "variables": [],
+  "steps": []
+}

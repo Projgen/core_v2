@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "es2022",
     "target": "esnext",
-    "types": [],
+    "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -41,6 +41,8 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true
   }
 }
