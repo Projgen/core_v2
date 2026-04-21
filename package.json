@@ -10,14 +10,15 @@
     "dev": "nodemon --watch src --ext ts --exec \"ts-node ./src/index.ts\"",
     "build": "tsc --outDir dist",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@types/yargs": "^17.0.35",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.4"
   },
   "dependencies": {
     "inquirer": "^13.4.2",

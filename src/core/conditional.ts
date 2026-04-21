@@ -1,4 +1,3 @@
-import { ca } from "zod/locales";
 import type { StepCondition } from "../types/template";
 import type { Variable } from "../types/variable";
 
@@ -77,9 +76,9 @@ const getArrayVariableValue = (
   variables: Variable[],
 ) => {
   const variable = getVariableValue(condition.variable, variables);
-  if (!Array.isArray(variable.content) || !Array.isArray(condition.value)) {
+  if (!Array.isArray(variable.content)) {
     throw new Error(
-      `Operator "${condition.operator}" can only be used with array variables and values`,
+      `Operator "${condition.operator}" can only be used with array variables`,
     );
   }
   return {
