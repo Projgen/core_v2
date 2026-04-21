@@ -1,0 +1,335 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["/src/templates/*.json", "/src/templates/**/*.json"],
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "version",
+          "author",
+          "variables",
+          "steps"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Used to identify the template when running the command (projgen create <template-id>)."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name, should be a human-friendly version of the id."
+          },
+          "description": {
+            "type": "string",
+            "description": "A short description of the template."
+          },
+          "version": {
+            "type": "string",
+            "description": "The version of the template, should follow semantic versioning."
+          },
+          "author": {
+            "type": "string",
+            "description": "The author of the template."
+          },
+          "variables": {
+            "type": "array",
+            "description": "Defines the variables that can be used in the template.",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "required": ["name", "message", "type", "required"],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "const": "string"
+                    },
+                    "default": {
+                      "type": "string"
+                    },
+                    "required": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["name", "message", "type", "required"],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "const": "number"
+                    },
+                    "default": {
+                      "type": "number"
+                    },
+                    "required": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["name", "message", "type"],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "const": "boolean"
+                    },
+                    "default": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "type",
+                    "required",
+                    "options"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "const": "select"
+                    },
+                    "required": {
+                      "type": "boolean"
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      }
+                    },
+                    "multiple": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "steps": {
+            "type": "array",
+            "description": "Defines the steps to execute to scaffold the project with the template.",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "required": ["type", "command", "args"],
+                  "properties": {
+                    "type": {
+                      "const": "run"
+                    },
+                    "when": {
+                      "$ref": "#/definitions/StepCondition"
+                    },
+                    "command": {
+                      "type": "string"
+                    },
+                    "args": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "cwd": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "path", "content"],
+                  "properties": {
+                    "type": {
+                      "const": "write"
+                    },
+                    "when": {
+                      "$ref": "#/definitions/StepCondition"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "path", "operation", "find", "content"],
+                  "properties": {
+                    "type": {
+                      "const": "patch-text"
+                    },
+                    "when": {
+                      "$ref": "#/definitions/StepCondition"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "operation": {
+                      "enum": [
+                        "replace",
+                        "insert-after",
+                        "insert-before",
+                        "append",
+                        "prepend"
+                      ]
+                    },
+                    "find": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "path", "operation", "jsonPath"],
+                  "properties": {
+                    "type": {
+                      "const": "patch-json"
+                    },
+                    "when": {
+                      "$ref": "#/definitions/StepCondition"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "operation": {
+                      "enum": ["set", "append", "remove"]
+                    },
+                    "jsonPath": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "value": {
+                      "$ref": "#/definitions/JsonValue"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "repository"],
+                  "properties": {
+                    "type": {
+                      "const": "clone"
+                    },
+                    "when": {
+                      "$ref": "#/definitions/StepCondition"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "branch": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "repository", "filePath", "destination"],
+                  "properties": {
+                    "type": {
+                      "const": "copy-github-file"
+                    },
+                    "when": {
+                      "$ref": "#/definitions/StepCondition"
+                    },
+                    "repository": {
+                      "type": "string"
+                    },
+                    "branch": {
+                      "type": "string"
+                    },
+                    "filePath": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "definitions": {
+          "JsonValue": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "StepCondition": {
+            "type": "object",
+            "required": ["variable", "operator", "value"],
+            "properties": {
+              "variable": {
+                "type": "string"
+              },
+              "operator": {
+                "enum": ["eq", "neq", "gt", "lt", "gte", "lte"]
+              },
+              "value": {
+                "$ref": "#/definitions/JsonValue"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,8 +1,60 @@
 {
   "id": "example-template",
   "name": "Example Template",
-  "description": "Minimal valid template",
+  "description": "A minimal template for testing purposes",
   "version": "1.0.0",
-  "variables": [],
+  "author": "John Doe",
+  "variables": [
+    {
+      "name": "projectName",
+      "type": "string",
+      "message": "What is the project name?",
+      "default": "my-app",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "message": "Provide a short project description",
+      "required": false
+    },
+    {
+      "name": "nodeVersion",
+      "type": "number",
+      "message": "Which Node.js major version should be targeted?",
+      "default": 20,
+      "required": true
+    },
+    {
+      "name": "useTypeScript",
+      "type": "boolean",
+      "message": "Use TypeScript?",
+      "default": true
+    },
+    {
+      "name": "packageManager",
+      "type": "select",
+      "message": "Choose a package manager",
+      "required": true,
+      "options": ["npm", "pnpm", "yarn"],
+      "multiple": false
+    },
+    {
+      "name": "enabledTools",
+      "type": "select",
+      "message": "Select optional tooling",
+      "required": false,
+      "options": ["eslint", "prettier", "vitest", "husky"],
+      "multiple": true
+    },
+    {
+      "name": "ports",
+      "type": "select",
+      "message": "Pick a default dev port",
+      "required": true,
+      "options": [3000, 4173, 8080],
+      "multiple": false
+    }
+  ],
   "steps": []
 }
