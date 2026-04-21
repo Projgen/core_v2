@@ -20,6 +20,7 @@
     "typescript": "^6.0.2"
   },
   "dependencies": {
+    "inquirer": "^13.4.2",
     "yargs": "^18.0.0",
     "zod": "^4.3.6"
   },
