@@ -6,7 +6,18 @@ export const JsonValueSchema: z.ZodType = z.lazy(() =>
 
 export const StepConditionSchema = z.object({
   variable: z.string(), // The name of the variable to check the condition against, should reference a variable defined in the template's variables array
-  operator: z.enum(["eq", "neq", "gt", "lt", "gte", "lte"]), // The operator to use for the condition (e.g., "eq" for equals, "neq" for not equals, "gt" for greater than, etc.)
+  operator: z.enum([
+    "eq",
+    "neq",
+    "gt",
+    "lt",
+    "gte",
+    "lte",
+    "contains",
+    "notContains",
+    "isNull",
+    "isNotNull",
+  ]), // The operator to use for the condition (e.g., "eq" for equals, "neq" for not equals, "gt" for greater than, etc.)
   value: JsonValueSchema, // The value to compare the variable against, should be of the same type as the variable being checked
 });
 
@@ -66,7 +77,7 @@ export const VariableSchema = z.object({
 export const RunStepSchema = z.object({
   // Common properties for all step types
   type: z.literal("run"), // Defines what kind of step it is
-  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "run" step type
   command: z.string(), // The command to run, is only the first word, so no arguments (e.g., "npm", "git", etc.)
@@ -78,7 +89,7 @@ export const RunStepSchema = z.object({
 export const WriteStepSchema = z.object({
   // Common properties for all step types
   type: z.literal("write"), // Defines what kind of step it is
-  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "write" step type
   path: z.string(), // The path to the file to write, relative to the project root
@@ -89,7 +100,7 @@ export const WriteStepSchema = z.object({
 export const PatchTextStepSchema = z.object({
   // Common properties for all step types
   type: z.literal("patch-text"), // Defines what kind of step it is
-  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "patch-text" step type
   path: z.string(), // The path to the file to patch, relative to the project root
@@ -108,7 +119,7 @@ export const PatchTextStepSchema = z.object({
 export const PatchJsonStepSchema = z.object({
   // Common properties for all step types
   type: z.literal("patch-json"), // Defines what kind of step it is
-  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "patch-json" step type
   path: z.string(), // The path to the JSON file to patch, relative to the project root
@@ -124,7 +135,7 @@ export const PatchJsonStepSchema = z.object({
 export const CloneStepSchema = z.object({
   // Common properties for all step types
   type: z.literal("clone"), // Defines what kind of step it is
-  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "clone" step type
   repository: z.string(), // The URL of the git repository to clone
@@ -136,7 +147,7 @@ export const CloneStepSchema = z.object({
 export const CopyGithubFileStepSchema = z.object({
   // Common properties for all step types
   type: z.literal("copy-github-file"), // Defines what kind of step it is
-  when: StepConditionSchema.optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
+  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "copy-github-file" step type
   repository: z.string(), // The repo to copy from ("user/repo")
