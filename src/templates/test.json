@@ -6,21 +6,18 @@
   "author": "John Doe",
   "variables": [
     {
-      "name": "test",
+      "name": "projectName",
       "type": "string",
-      "description": "A test variable",
-      "message": "Write 'test'",
+      "message": "Project name: ",
+      "description": "The name of the project",
+      "default": "my-app",
       "required": true
     }
   ],
   "steps": [
     {
       "type": "run",
-      "when": [
-        { "variable": "test", "operator": "matches", "value": "^t.*t$" }
-      ],
-      "command": "npm",
-      "args": ["install", "react-scripts"]
+      "command": "pnpm create next-app@latest my-app --yes"
     }
   ]
 }

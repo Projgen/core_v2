@@ -81,8 +81,7 @@ export const RunStepSchema = z.object({
   when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
 
   // Unique properties for the "run" step type
-  command: z.string(), // The command to run, is only the first word, so no arguments (e.g., "npm", "git", etc.)
-  args: z.array(z.string()), // The arguments to pass to the command (e.g., ["install", "zod"])
+  command: z.string(), // The command to run
   cwd: z.string().optional(), // The directory to run the command in relative to the project root, if not provided it will run in the root of the project
 });
 
