@@ -11,28 +11,13 @@
       "description": "A test variable",
       "message": "Write 'test'",
       "required": true
-    },
-    {
-      "name": "run",
-      "type": "boolean",
-      "description": "Whether to run the command",
-      "message": "Do you want to run the command?"
-    },
-    {
-      "name": "code",
-      "type": "number",
-      "description": "A code variable",
-      "message": "Enter a code number (42)",
-      "required": true
     }
   ],
   "steps": [
     {
       "type": "run",
       "when": [
-        { "variable": "test", "operator": "eq", "value": "test" },
-        { "variable": "run", "operator": "eq", "value": true },
-        { "variable": "code", "operator": "gt", "value": 40 }
+        { "variable": "test", "operator": "matches", "value": "^t.*t$" }
       ],
       "command": "npm",
       "args": ["install", "react-scripts"]

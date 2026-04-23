@@ -17,6 +17,7 @@ export const StepConditionSchema = z.object({
     "notContains",
     "isNull",
     "isNotNull",
+    "matches", // checks for regex match
   ]), // The operator to use for the condition (e.g., "eq" for equals, "neq" for not equals, "gt" for greater than, etc.)
   value: JsonValueSchema, // The value to compare the variable against, should be of the same type as the variable being checked
 });

@@ -64,11 +64,38 @@ export const checkCondition = (
       const variable = getVariableValue(condition.variable, variables);
       return variable.content !== null;
     }
+    case "matches": {
+      const { condition: _condition, variable } = getStringVariableValue(
+        condition,
+        variables,
+      );
+      const regex = new RegExp(_condition.value);
+      return regex.test(variable.content);
+    }
     default:
       throw new Error(
         `Unsupported operator "${condition.operator}" in condition`,
       );
   }
+};
+
+const getStringVariableValue = (
+  condition: StepCondition,
+  variables: Variable[],
+) => {
+  const variable = getVariableValue(condition.variable, variables);
+  if (
+    typeof variable.content !== "string" ||
+    typeof condition.value !== "string"
+  ) {
+    throw new Error(
+      `Operator "${condition.operator}" can only be used with string variables`,
+    );
+  }
+  return {
+    variable: variable as Variable & { content: string },
+    condition: condition as StepCondition & { value: string },
+  };
 };
 
 const getArrayVariableValue = (

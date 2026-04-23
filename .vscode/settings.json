@@ -337,7 +337,8 @@
                   "contains",
                   "notContains",
                   "isNull",
-                  "isNotNull"
+                  "isNotNull",
+                  "matches"
                 ]
               },
               "value": {
