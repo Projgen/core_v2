@@ -1,11 +1,19 @@
-import type { Template, Variable } from "../types/template";
-import type { Variable as VariableValue } from "../types/variable";
+import { type Template, type Variable } from "../types/template.ts";
+import type { Variable as VariableValue } from "../types/variable.ts";
 import prompter, { type Prompter } from "../utils/prompter.ts";
+import steps from "./steps/steps.ts";
 
 export const scaffoldFromTemplate = async (template: Template) => {
   printTemplateInfo(template);
   const variables = await promptForVariables(template.variables);
-  console.log(variables);
+
+  // Run Steps
+  for (const step of template.steps) {
+    switch (step.type) {
+      case "run":
+        await steps.runStep(step, variables);
+    }
+  }
 };
 
 const printTemplateInfo = (

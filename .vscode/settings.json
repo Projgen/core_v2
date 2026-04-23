@@ -150,22 +150,16 @@
               "oneOf": [
                 {
                   "type": "object",
-                  "required": ["type", "command", "args"],
+                  "required": ["type", "command"],
                   "properties": {
                     "type": {
                       "const": "run"
                     },
                     "when": {
-                      "$ref": "#/definitions/StepCondition"
+                      "$ref": "#/definitions/StepConditionArray"
                     },
                     "command": {
                       "type": "string"
-                    },
-                    "args": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
                     },
                     "cwd": {
                       "type": "string"
@@ -180,7 +174,7 @@
                       "const": "write"
                     },
                     "when": {
-                      "$ref": "#/definitions/StepCondition"
+                      "$ref": "#/definitions/StepConditionArray"
                     },
                     "path": {
                       "type": "string"
@@ -198,7 +192,7 @@
                       "const": "patch-text"
                     },
                     "when": {
-                      "$ref": "#/definitions/StepCondition"
+                      "$ref": "#/definitions/StepConditionArray"
                     },
                     "path": {
                       "type": "string"
@@ -228,7 +222,7 @@
                       "const": "patch-json"
                     },
                     "when": {
-                      "$ref": "#/definitions/StepCondition"
+                      "$ref": "#/definitions/StepConditionArray"
                     },
                     "path": {
                       "type": "string"
@@ -255,7 +249,7 @@
                       "const": "clone"
                     },
                     "when": {
-                      "$ref": "#/definitions/StepCondition"
+                      "$ref": "#/definitions/StepConditionArray"
                     },
                     "repository": {
                       "type": "string"
@@ -276,7 +270,7 @@
                       "const": "copy-github-file"
                     },
                     "when": {
-                      "$ref": "#/definitions/StepCondition"
+                      "$ref": "#/definitions/StepConditionArray"
                     },
                     "repository": {
                       "type": "string"
@@ -313,6 +307,12 @@
               }
             ]
           },
+          "StepConditionArray": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/StepCondition"
+            }
+          },
           "StepCondition": {
             "type": "object",
             "required": ["variable", "operator", "value"],
@@ -321,7 +321,19 @@
                 "type": "string"
               },
               "operator": {
-                "enum": ["eq", "neq", "gt", "lt", "gte", "lte"]
+                "enum": [
+                  "eq",
+                  "neq",
+                  "gt",
+                  "lt",
+                  "gte",
+                  "lte",
+                  "contains",
+                  "notContains",
+                  "isNull",
+                  "isNotNull",
+                  "matches"
+                ]
               },
               "value": {
                 "$ref": "#/definitions/JsonValue"
