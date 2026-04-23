@@ -111,8 +111,12 @@ export const PatchTextStepSchema = z.object({
     "append",
     "prepend",
   ]), // The operation to perform on the file. Replace can be used to delete the part as well
-  find: z.string(), // The text to find in the file to determine where to apply the patch. The operation will be applied to all instances of the found text in the file
-  content: z.string(), // The content to use for the patch, use empty string and replace to remove the found text
+  find: z.string().optional(), // The text to find in the file to determine where to apply the patch. The operation will be applied to all instances of the found text in the file
+  // find is not used for append and prepend, since they are relative to the whole file, not to a specific part of it
+
+  // Either use content or url, not both
+  content: z.string().optional(), // The content to use for the patch, use empty string and replace to remove the found text
+  url: z.string().optional(), // An optional url to fetch the content from, if provided it will ignore the content field and use the fetched content for the patch instead,can be used to copy a file from github for example
 });
 
 // A Step to edit JSON files (usefull for config files)
@@ -143,6 +147,7 @@ export const CloneStepSchema = z.object({
   destination: z.string().optional(), // The path to the directory to clone the repository into, relative to the project root, will default to project root
 });
 
+/*
 // A Step to copy a specific file from a github repo
 export const CopyGithubFileStepSchema = z.object({
   // Common properties for all step types
@@ -155,6 +160,7 @@ export const CopyGithubFileStepSchema = z.object({
   filePath: z.string(), // The path to the file to copy
   destination: z.string(), // The path to the file to copy to, relative to the project root
 });
+*/
 
 export const StepSchema = z.discriminatedUnion("type", [
   RunStepSchema,
@@ -162,7 +168,6 @@ export const StepSchema = z.discriminatedUnion("type", [
   PatchTextStepSchema,
   PatchJsonStepSchema,
   CloneStepSchema,
-  CopyGithubFileStepSchema,
 ]);
 
 export const TemplateSchema = z.object({
@@ -190,6 +195,5 @@ export type WriteStep = z.infer<typeof WriteStepSchema>;
 export type PatchTextStep = z.infer<typeof PatchTextStepSchema>;
 export type PatchJsonStep = z.infer<typeof PatchJsonStepSchema>;
 export type CloneStep = z.infer<typeof CloneStepSchema>;
-export type CopyGithubFileStep = z.infer<typeof CopyGithubFileStepSchema>;
 
 export type JsonValue = z.infer<typeof JsonValueSchema>;
