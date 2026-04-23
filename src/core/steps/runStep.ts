@@ -4,7 +4,15 @@ import type { Variable } from "../../types/variable";
 import { checkCondition } from "../conditional.ts";
 import { replaceVariablesInString } from "../../utils/replaceVariable.ts";
 
-export default async (step: RunStep, variables: Variable[]) => {
+export default async (
+  step: RunStep,
+  variables: Variable[],
+  executer: (
+    arg: string,
+    options: { cwd: string | undefined },
+    callback: (error: Error | null, stdout: string, stderr: string) => void,
+  ) => void = exec,
+) => {
   if (
     step.when &&
     !step.when.every((condition) => checkCondition(condition, variables))
@@ -14,7 +22,7 @@ export default async (step: RunStep, variables: Variable[]) => {
 
   const command = replaceVariablesInString(step.command, variables);
 
-  exec(command, { cwd: step.cwd }, (error, stdout, stderr) => {
+  executer(command, { cwd: step.cwd }, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing command: ${error.message}`);
       return;
