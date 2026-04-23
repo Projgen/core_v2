@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { checkCondition } from "../../core/conditional";
-import type { StepCondition } from "../../types/template";
-import type { Variable } from "../../types/variable";
+import { checkCondition } from "../../core/conditional.ts";
+import type { StepCondition } from "../../types/template.ts";
+import type { Variable } from "../../types/variable.ts";
 
 const testVariables: Variable[] = [
   { name: "var1", content: "test" },

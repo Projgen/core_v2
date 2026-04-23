@@ -6,55 +6,36 @@
   "author": "John Doe",
   "variables": [
     {
-      "name": "projectName",
+      "name": "test",
       "type": "string",
-      "message": "What is the project name?",
-      "default": "my-app",
+      "description": "A test variable",
+      "message": "Write 'test'",
       "required": true
     },
     {
-      "name": "description",
-      "type": "string",
-      "message": "Provide a short project description",
-      "required": false
-    },
-    {
-      "name": "nodeVersion",
-      "type": "number",
-      "message": "Which Node.js major version should be targeted?",
-      "default": 20,
-      "required": true
-    },
-    {
-      "name": "useTypeScript",
+      "name": "run",
       "type": "boolean",
-      "message": "Use TypeScript?",
-      "default": true
+      "description": "Whether to run the command",
+      "message": "Do you want to run the command?"
     },
     {
-      "name": "packageManager",
-      "type": "select",
-      "message": "Choose a package manager",
-      "required": true,
-      "options": ["npm", "pnpm", "yarn"],
-      "multiple": false
-    },
-    {
-      "name": "enabledTools",
-      "type": "select",
-      "message": "Select optional tooling",
-      "required": false,
-      "options": ["eslint", "prettier", "vitest", "husky"],
-      "multiple": true
-    },
-    {
-      "name": "ports",
-      "type": "select",
-      "message": "Pick a default dev port",
-      "required": true,
-      "options": [3000, 4173, 8080],
-      "multiple": false
+      "name": "code",
+      "type": "number",
+      "description": "A code variable",
+      "message": "Enter a code number (42)",
+      "required": true
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "type": "run",
+      "when": [
+        { "variable": "test", "operator": "eq", "value": "test" },
+        { "variable": "run", "operator": "eq", "value": true },
+        { "variable": "code", "operator": "gt", "value": 40 }
+      ],
+      "command": "npm",
+      "args": ["install", "react-scripts"]
+    }
+  ]
 }

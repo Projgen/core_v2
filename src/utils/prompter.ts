@@ -4,7 +4,7 @@ import type {
   SelectVariable,
   NumberVariable,
   StringVariable,
-} from "../types/template";
+} from "../types/template.ts";
 import inquirer from "inquirer";
 
 const promptForString = async (
