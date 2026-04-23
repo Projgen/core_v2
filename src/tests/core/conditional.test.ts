@@ -232,6 +232,40 @@ describe("checkCondition", () => {
     expect(result).toBe(false);
   });
 
+  test("matches returns true when variable content matches the regex", () => {
+    const condition: StepCondition = {
+      variable: "var1",
+      operator: "matches",
+      value: "^te.*$",
+    };
+    const result = checkCondition(condition, testVariables);
+
+    expect(result).toBe(true);
+  });
+
+  test("matches returns false when variable content does not match the regex", () => {
+    const condition: StepCondition = {
+      variable: "var1",
+      operator: "matches",
+      value: "^foo$",
+    };
+    const result = checkCondition(condition, testVariables);
+
+    expect(result).toBe(false);
+  });
+
+  test("throws when matches is used with a non-string variable", () => {
+    const condition: StepCondition = {
+      variable: "var2",
+      operator: "matches",
+      value: "^5$",
+    };
+
+    expect(() => checkCondition(condition, testVariables)).toThrow(
+      'Operator "matches" can only be used with string variables',
+    );
+  });
+
   test("throws when variable does not exist", () => {
     const condition: StepCondition = {
       variable: "unknown",
