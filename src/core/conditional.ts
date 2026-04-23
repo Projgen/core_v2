@@ -72,6 +72,14 @@ export const checkCondition = (
       const regex = new RegExp(_condition.value);
       return regex.test(variable.content);
     }
+    case "notMatches": {
+      const { condition: _condition, variable } = getStringVariableValue(
+        condition,
+        variables,
+      );
+      const regex = new RegExp(_condition.value);
+      return !regex.test(variable.content);
+    }
     default:
       throw new Error(
         `Unsupported operator "${condition.operator}" in condition`,
