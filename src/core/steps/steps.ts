@@ -1,3 +1,4 @@
 import runStep from "./runStep.ts";
+import writeStep from "./writeStep.ts";
 
-export default { runStep };
+export default { runStep, writeStep };

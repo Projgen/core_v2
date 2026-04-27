@@ -12,6 +12,10 @@ export const scaffoldFromTemplate = async (template: Template) => {
     switch (step.type) {
       case "run":
         await steps.runStep(step, variables);
+        break;
+      case "write":
+        await steps.writeStep(step, variables);
+        break;
     }
   }
 };
