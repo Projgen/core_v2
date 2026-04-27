@@ -18,6 +18,11 @@
     {
       "type": "run",
       "command": "echo {{message}}"
+    },
+    {
+      "type": "write",
+      "path": "output.txt",
+      "content": "The message is: {{message}}"
     }
   ]
 }
