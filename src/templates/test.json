@@ -22,7 +22,7 @@
     {
       "type": "write",
       "path": "something/output.txt",
-      "content": "The message is: {{message}}"
+      "url": "https://raw.githubusercontent.com/Projgen/core_v2/refs/heads/master/src/index.ts?token=GHSAT0AAAAAADXANFIAOT5L5GECPSYSYU7E2PPCCVQ"
     }
   ]
 }
