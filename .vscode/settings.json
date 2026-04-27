@@ -246,27 +246,6 @@
                       "$ref": "#/definitions/JsonValue"
                     }
                   }
-                },
-                {
-                  "type": "object",
-                  "required": ["type", "repository"],
-                  "properties": {
-                    "type": {
-                      "const": "clone"
-                    },
-                    "when": {
-                      "$ref": "#/definitions/StepConditionArray"
-                    },
-                    "repository": {
-                      "type": "string"
-                    },
-                    "branch": {
-                      "type": "string"
-                    },
-                    "destination": {
-                      "type": "string"
-                    }
-                  }
                 }
               ]
             }

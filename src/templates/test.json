@@ -21,8 +21,8 @@
     },
     {
       "type": "write",
-      "path": "something/output.txt",
-      "url": "https://raw.githubusercontent.com/Projgen/core_v2/refs/heads/master/src/index.ts?token=GHSAT0AAAAAADXANFIAOT5L5GECPSYSYU7E2PPCCVQ"
+      "path": ".temp/output.txt",
+      "url": "https://gist.githubusercontent.com/LorisRue/27dbea2d2aa030bcf9e98797b86f1787/raw/1b12451080557096adb903a82138347e4424b482/gistfile1.txt"
     }
   ]
 }
