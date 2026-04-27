@@ -13,8 +13,18 @@ export default async (step: WriteStep, variables: Variable[]) => {
     return;
   }
 
+  if (step.url && step.content) {
+    console.warn(
+      `Both "url" and "content" are provided for the write step at path "${step.path}". The "url" will take precedence and the "content" will be ignored.`,
+    );
+  }
+
   const path = replaceVariablesInString(step.path, variables);
-  const content = replaceVariablesInString(step.content, variables);
+  const rawContent = step.url
+    ? await fetch(step.url).then((res) => res.text())
+    : step.content || "";
+
+  const content = replaceVariablesInString(rawContent, variables);
 
   try {
     await mkdir(dirname(path), { recursive: true });

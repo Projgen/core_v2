@@ -168,7 +168,7 @@
                 },
                 {
                   "type": "object",
-                  "required": ["type", "path", "content"],
+                  "required": ["type", "path"],
                   "properties": {
                     "type": {
                       "const": "write"
@@ -181,12 +181,15 @@
                     },
                     "content": {
                       "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
                     }
                   }
                 },
                 {
                   "type": "object",
-                  "required": ["type", "path", "operation", "find", "content"],
+                  "required": ["type", "path", "operation"],
                   "properties": {
                     "type": {
                       "const": "patch-text"
@@ -210,6 +213,9 @@
                       "type": "string"
                     },
                     "content": {
+                      "type": "string"
+                    },
+                    "url": {
                       "type": "string"
                     }
                   }
@@ -238,51 +244,6 @@
                     },
                     "value": {
                       "$ref": "#/definitions/JsonValue"
-                    }
-                  }
-                },
-                {
-                  "type": "object",
-                  "required": ["type", "repository"],
-                  "properties": {
-                    "type": {
-                      "const": "clone"
-                    },
-                    "when": {
-                      "$ref": "#/definitions/StepConditionArray"
-                    },
-                    "repository": {
-                      "type": "string"
-                    },
-                    "branch": {
-                      "type": "string"
-                    },
-                    "destination": {
-                      "type": "string"
-                    }
-                  }
-                },
-                {
-                  "type": "object",
-                  "required": ["type", "repository", "filePath", "destination"],
-                  "properties": {
-                    "type": {
-                      "const": "copy-github-file"
-                    },
-                    "when": {
-                      "$ref": "#/definitions/StepConditionArray"
-                    },
-                    "repository": {
-                      "type": "string"
-                    },
-                    "branch": {
-                      "type": "string"
-                    },
-                    "filePath": {
-                      "type": "string"
-                    },
-                    "destination": {
-                      "type": "string"
                     }
                   }
                 }
@@ -332,7 +293,8 @@
                   "notContains",
                   "isNull",
                   "isNotNull",
-                  "matches"
+                  "matches",
+                  "notMatches"
                 ]
               },
               "value": {

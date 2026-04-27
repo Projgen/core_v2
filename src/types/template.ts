@@ -94,7 +94,8 @@ export const WriteStepSchema = z.object({
 
   // Unique properties for the "write" step type
   path: z.string(), // The path to the file to write, relative to the project root
-  content: z.string(), // The content to write to the file
+  content: z.string().optional(), // The content to write to the file
+  url: z.string().optional(), // An optional url to fetch the content from, if provided it will ignore the content field and use the fetched content for the file instead,can be used to copy a file from github for example
 });
 
 // A Step to edit text in a file
@@ -136,39 +137,11 @@ export const PatchJsonStepSchema = z.object({
   value: JsonValueSchema.optional(), // The value to use for the patch, required for "set" and "append" operations, will be ignored for "remove" operation
 });
 
-// A Step to clone a git repository
-export const CloneStepSchema = z.object({
-  // Common properties for all step types
-  type: z.literal("clone"), // Defines what kind of step it is
-  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
-
-  // Unique properties for the "clone" step type
-  repository: z.string(), // The URL of the git repository to clone
-  branch: z.string().optional(), // The branch to clone, if not provided it will clone the default branch
-  destination: z.string().optional(), // The path to the directory to clone the repository into, relative to the project root, will default to project root
-});
-
-/*
-// A Step to copy a specific file from a github repo
-export const CopyGithubFileStepSchema = z.object({
-  // Common properties for all step types
-  type: z.literal("copy-github-file"), // Defines what kind of step it is
-  when: z.array(StepConditionSchema).optional(), // An optional condition that determines whether this step should be executed, if not provided the step will always be executed
-
-  // Unique properties for the "copy-github-file" step type
-  repository: z.string(), // The repo to copy from ("user/repo")
-  branch: z.string().optional(), // The branch to copy from, if not provided it will copy from the default branch
-  filePath: z.string(), // The path to the file to copy
-  destination: z.string(), // The path to the file to copy to, relative to the project root
-});
-*/
-
 export const StepSchema = z.discriminatedUnion("type", [
   RunStepSchema,
   WriteStepSchema,
   PatchTextStepSchema,
   PatchJsonStepSchema,
-  CloneStepSchema,
 ]);
 
 export const TemplateSchema = z.object({
@@ -195,6 +168,5 @@ export type RunStep = z.infer<typeof RunStepSchema>;
 export type WriteStep = z.infer<typeof WriteStepSchema>;
 export type PatchTextStep = z.infer<typeof PatchTextStepSchema>;
 export type PatchJsonStep = z.infer<typeof PatchJsonStepSchema>;
-export type CloneStep = z.infer<typeof CloneStepSchema>;
 
 export type JsonValue = z.infer<typeof JsonValueSchema>;
