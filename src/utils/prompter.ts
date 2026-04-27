@@ -1,4 +1,3 @@
-import { de } from "zod/locales";
 import type {
   BooleanVariable,
   SelectVariable,
