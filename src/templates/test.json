@@ -21,7 +21,7 @@
     },
     {
       "type": "write",
-      "path": "output.txt",
+      "path": "something/output.txt",
       "content": "The message is: {{message}}"
     }
   ]
