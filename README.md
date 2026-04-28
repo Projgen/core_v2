@@ -259,7 +259,13 @@ Any step can include a `when` array to conditionally execute based on variable v
 }
 ```
 
-**Available operators:** `eq`, `neq`, `gt`, `lt`, `gte`, `lte`, `contains`, `notContains`, `isNull`, `isNotNull`, `matches`, `notMatches`
+| Parameter | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| variable  | The name of a variable defined in the variables array        |
+| operator  | the operator to use (see below)                              |
+| value     | The value to check for (not needed for isNull and isNotNull) |
+
+**Available operators:**
 
 | Operator    | Name                  | Description                                                | Valid Datatypes     |
 | ----------- | --------------------- | ---------------------------------------------------------- | ------------------- |
