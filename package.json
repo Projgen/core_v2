@@ -1,5 +1,5 @@
 {
-  "name": "projgen",
+  "name": "@projgen/core_v2",
   "version": "0.1.0",
   "description": "A project scaffolding cli tool",
   "license": "MIT",
@@ -9,6 +9,9 @@
   ],
   "type": "module",
   "main": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Projgen/core_v2.git"
