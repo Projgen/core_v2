@@ -1,11 +1,18 @@
 {
   "name": "projgen",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A project scaffolding cli tool",
   "license": "MIT",
   "author": "LorisRue",
+  "keywords": [
+    "cli"
+  ],
   "type": "module",
   "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Projgen/core_v2.git"
+  },
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec \"ts-node ./src/index.ts\"",
     "build": "tsc --outDir dist",
