@@ -311,3 +311,5 @@ npm install
 ## License
 
 MIT — see [LICENSE](./LICENSE) for details.
+
+Thanks!
