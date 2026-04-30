@@ -265,6 +265,18 @@
               },
               {
                 "type": "null"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/JsonValue"
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/definitions/JsonValue"
+                }
               }
             ]
           },

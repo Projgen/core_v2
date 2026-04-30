@@ -1,6 +1,6 @@
 import type { WriteStep } from "../../types/template";
 import type { Variable } from "../../types/variable";
-import { replaceVariablesInString } from "../../utils/replaceVariable.ts";
+import { resolveVariablesInString } from "../../utils/replaceVariable.ts";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { checkCondition } from "../conditional.ts";
@@ -21,12 +21,12 @@ export default async (step: WriteStep, variables: Variable[]) => {
 
   console.log(`\nWriting file at path: ${step.path}`);
 
-  const path = replaceVariablesInString(step.path, variables);
+  const path = resolveVariablesInString(step.path, variables);
   const rawContent = step.url
     ? await fetch(step.url).then((res) => res.text())
     : step.content || "";
 
-  const content = replaceVariablesInString(rawContent, variables);
+  const content = resolveVariablesInString(rawContent, variables);
 
   try {
     await mkdir(dirname(path), { recursive: true });
