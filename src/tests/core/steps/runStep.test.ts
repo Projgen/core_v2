@@ -1,10 +1,37 @@
-import { describe, expect, test, vi } from "vitest";
+import { EventEmitter } from "node:events";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+const { spawnMock } = vi.hoisted(() => ({
+  spawnMock: vi.fn(),
+}));
+
+vi.mock("node:child_process", () => ({
+  spawn: spawnMock,
+}));
+
 import runStep from "../../../core/steps/runStep.ts";
 import type { RunStep } from "../../../types/template.ts";
 import type { Variable } from "../../../types/variable.ts";
 
 describe("runStep", () => {
-  test("calls custom executer with replaced command and cwd", async () => {
+  const stdoutWriteSpy = vi
+    .spyOn(process.stdout, "write")
+    .mockImplementation(() => true);
+  const stderrWriteSpy = vi
+    .spyOn(process.stderr, "write")
+    .mockImplementation(() => true);
+
+  beforeEach(() => {
+    spawnMock.mockReset();
+    stdoutWriteSpy.mockClear();
+    stderrWriteSpy.mockClear();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("runs the command with replaced variables and cwd", async () => {
     const step: RunStep = {
       type: "run",
       command: "echo {{name}}",
@@ -12,27 +39,31 @@ describe("runStep", () => {
     };
     const variables: Variable[] = [{ name: "name", content: "Alice" }];
 
-    const executer = vi.fn(
-      (
-        _arg: string,
-        _options: { cwd: string | undefined },
-        callback: (error: Error | null, stdout: string, stderr: string) => void,
-      ) => {
-        callback(null, "ok", "");
-      },
-    );
+    const childProcess = new EventEmitter() as EventEmitter & {
+      stdout: EventEmitter;
+      stderr: EventEmitter;
+    };
+    childProcess.stdout = new EventEmitter();
+    childProcess.stderr = new EventEmitter();
 
-    await runStep(step, variables, executer);
+    spawnMock.mockReturnValue(childProcess);
 
-    expect(executer).toHaveBeenCalledTimes(1);
-    expect(executer).toHaveBeenCalledWith(
-      "echo Alice",
-      { cwd: "./project" },
-      expect.any(Function),
-    );
+    const runPromise = runStep(step, variables);
+
+    childProcess.stdout.emit("data", "ok");
+    childProcess.emit("close", 0);
+
+    await runPromise;
+
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+    expect(spawnMock).toHaveBeenCalledWith("echo Alice", {
+      cwd: "./project",
+      shell: true,
+    });
+    expect(stdoutWriteSpy).toHaveBeenCalledWith("ok");
   });
 
-  test("does not call custom executer when a condition fails", async () => {
+  test("does not start the process when a condition fails", async () => {
     const step: RunStep = {
       type: "run",
       command: "echo should-not-run",
@@ -40,14 +71,12 @@ describe("runStep", () => {
     };
     const variables: Variable[] = [{ name: "enabled", content: false }];
 
-    const executer = vi.fn();
+    await runStep(step, variables);
 
-    await runStep(step, variables, executer);
-
-    expect(executer).not.toHaveBeenCalled();
+    expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  test("calls custom executer when all conditions pass", async () => {
+  test("streams output before resolving on close", async () => {
     const step: RunStep = {
       type: "run",
       command: "echo run",
@@ -61,23 +90,38 @@ describe("runStep", () => {
       { name: "count", content: 2 },
     ];
 
-    const executer = vi.fn(
-      (
-        _arg: string,
-        _options: { cwd: string | undefined },
-        callback: (error: Error | null, stdout: string, stderr: string) => void,
-      ) => {
-        callback(null, "ran", "");
-      },
-    );
+    const childProcess = new EventEmitter() as EventEmitter & {
+      stdout: EventEmitter;
+      stderr: EventEmitter;
+    };
+    childProcess.stdout = new EventEmitter();
+    childProcess.stderr = new EventEmitter();
 
-    await runStep(step, variables, executer);
+    spawnMock.mockReturnValue(childProcess);
 
-    expect(executer).toHaveBeenCalledTimes(1);
-    expect(executer).toHaveBeenCalledWith(
-      "echo run",
-      { cwd: undefined },
-      expect.any(Function),
-    );
+    const runPromise = runStep(step, variables);
+
+    let settled = false;
+    runPromise.then(() => {
+      settled = true;
+    });
+
+    childProcess.stderr.emit("data", "warning");
+
+    await Promise.resolve();
+
+    expect(settled).toBe(false);
+    expect(stderrWriteSpy).toHaveBeenCalledWith("warning");
+
+    childProcess.emit("close", 0);
+
+    await runPromise;
+
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+    expect(spawnMock).toHaveBeenCalledWith("echo run", {
+      cwd: undefined,
+      shell: true,
+    });
+    expect(settled).toBe(true);
   });
 });
