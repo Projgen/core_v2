@@ -196,11 +196,11 @@ Use `content=""` and `operation="replace"` to remove the text defined in `find`
 
 Surgically modify JSON config files using a path array.
 
-| Operation | Description                                            |
-| --------- | ------------------------------------------------------ |
-| `set`     | Set a value at a path, creating it if it doesn't exist |
-| `append`  | Append a value to an array at a path                   |
-| `remove`  | Remove the value at a path                             |
+| Operation | Description                                                |
+| --------- | ---------------------------------------------------------- |
+| `set`     | Set a value at a path, creating it if it doesn't exist     |
+| `append`  | Append a value to an array or object (key-value) at a path |
+| `remove`  | Remove the value at a path                                 |
 
 Example JSON:
 
