@@ -16,6 +16,11 @@ export const scaffoldFromTemplate = async (template: Template) => {
       case "write":
         await steps.writeStep(step, variables);
         break;
+      case "patch-text":
+        await steps.patchTextStep(step, variables);
+        break;
+      default:
+        console.warn(`Unknown step type: ${step.type}`); // This should never happen due to the schema validation, but it's good to have just in case
     }
   }
 };

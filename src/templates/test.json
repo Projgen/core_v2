@@ -4,25 +4,31 @@
   "description": "A minimal template for testing purposes",
   "version": "1.0.0",
   "author": "John Doe",
-  "variables": [
-    {
-      "name": "message",
-      "type": "string",
-      "message": "What is your message?",
-      "description": "The message to display",
-      "default": "Hello, World!",
-      "required": true
-    }
-  ],
+  "variables": [],
   "steps": [
     {
       "type": "run",
-      "command": "echo {{message}}"
+      "command": "ping google.com"
     },
     {
       "type": "write",
-      "path": ".temp/output.txt",
-      "url": "https://gist.githubusercontent.com/LorisRue/27dbea2d2aa030bcf9e98797b86f1787/raw/1b12451080557096adb903a82138347e4424b482/gistfile1.txt"
+      "path": "temp.txt",
+      "content": "Hello, World!"
+    },
+    {
+      "type": "run",
+      "command": "type temp.txt"
+    },
+    {
+      "type": "patch-text",
+      "path": "temp.txt",
+      "find": "Hello",
+      "operation": "replace",
+      "content": "Goodbye"
+    },
+    {
+      "type": "run",
+      "command": "type temp.txt"
     }
   ]
 }

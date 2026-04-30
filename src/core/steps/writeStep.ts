@@ -19,6 +19,8 @@ export default async (step: WriteStep, variables: Variable[]) => {
     );
   }
 
+  console.log(`\nWriting file at path: ${step.path}`);
+
   const path = replaceVariablesInString(step.path, variables);
   const rawContent = step.url
     ? await fetch(step.url).then((res) => res.text())
@@ -29,7 +31,6 @@ export default async (step: WriteStep, variables: Variable[]) => {
   try {
     await mkdir(dirname(path), { recursive: true });
     await writeFile(path, content);
-    console.log(`File written successfully to ${path}`);
   } catch (err) {
     if (err instanceof Error) {
       console.error(`Error writing file: ${err.message}`);
