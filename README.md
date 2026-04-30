@@ -5,13 +5,13 @@
 ## Installation
 
 ```bash
-npm install -g projgen
+npm install -g @projgen/cli
 ```
 
 Or run directly without installing:
 
 ```bash
-npx projgen create ./my-template.json
+npx @projgen/cli create ./my-template.json
 ```
 
 ## Usage
