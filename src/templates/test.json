@@ -9,13 +9,14 @@
     {
       "type": "write",
       "path": "example.json",
-      "content": "{\"someKey\": \"someValue\", \"someObject\": {\"nestedArray\": [\"nestedValue1\", {\"deeplyNestedKey\": \"deeplyNestedValue\"}]}}"
+      "content": "{\"someKey\": \"someValue\"}"
     },
     {
       "type": "patch-json",
       "path": "example.json",
-      "operation": "remove",
-      "jsonPath": ["someObject"]
+      "operation": "set",
+      "jsonPath": ["someObject", "nestedObject"],
+      "value": true
     },
     {
       "type": "run",

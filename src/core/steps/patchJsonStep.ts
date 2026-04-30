@@ -60,18 +60,23 @@ const setValueAtJsonPath = (
 ): unknown => {
   if (typeof jsonPath[0] !== "string")
     throw new Error("jsonPath has to be an array of strings");
-  if (isRecord(json)) {
-    if (jsonPath.length > 1) {
-      json[jsonPath[0]] = setValueAtJsonPath(
-        json[jsonPath[0]],
-        jsonPath.slice(1),
-        value,
-      );
-      return json;
-    }
-    json[jsonPath[0]] = value;
-    return json;
+
+  // Ensure we have an object to operate on; create missing objects along the path
+  const obj: Record<string, unknown> = isRecord(json)
+    ? (json as Record<string, unknown>)
+    : {};
+
+  if (jsonPath.length > 1) {
+    obj[jsonPath[0]] = setValueAtJsonPath(
+      obj[jsonPath[0]],
+      jsonPath.slice(1),
+      value,
+    );
+    return obj;
   }
+
+  obj[jsonPath[0]] = value;
+  return obj;
 };
 
 const appendValueAtJsonPath = (
