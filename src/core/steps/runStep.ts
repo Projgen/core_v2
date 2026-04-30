@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import type { RunStep } from "../../types/template";
 import type { Variable } from "../../types/variable";
 import { checkCondition } from "../conditional.ts";
-import { replaceVariablesInString } from "../../utils/replaceVariable.ts";
+import { resolveVariablesInString } from "../../utils/replaceVariable.ts";
 
 export default async (step: RunStep, variables: Variable[]) => {
   if (
@@ -12,7 +12,7 @@ export default async (step: RunStep, variables: Variable[]) => {
     return;
   }
 
-  const command = replaceVariablesInString(step.command, variables);
+  const command = resolveVariablesInString(step.command, variables);
 
   console.log(`\nRunning command: ${command}`);
 

@@ -1,6 +1,6 @@
 import type { Variable } from "../types/variable";
 
-export const replaceVariablesInString = (
+export const resolveVariablesInString = (
   str: string,
   variables: Variable[],
 ) => {

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import type { PatchTextStep } from "../../types/template";
 import type { Variable } from "../../types/variable";
-import { replaceVariablesInString } from "../../utils/replaceVariable.ts";
+import { resolveVariablesInString } from "../../utils/replaceVariable.ts";
 import { checkCondition } from "../conditional.ts";
 
 export default async (step: PatchTextStep, variables: Variable[]) => {
@@ -23,15 +23,15 @@ export default async (step: PatchTextStep, variables: Variable[]) => {
   );
 
   // Replace variables and gather the data
-  const path = replaceVariablesInString(step.path, variables);
+  const path = resolveVariablesInString(step.path, variables);
   const find = step.find
-    ? replaceVariablesInString(step.find, variables)
+    ? resolveVariablesInString(step.find, variables)
     : undefined;
 
   const rawText = step.url
     ? await fetch(step.url).then((res) => res.text())
     : step.content || "";
-  const text = replaceVariablesInString(rawText, variables);
+  const text = resolveVariablesInString(rawText, variables);
 
   // Read the target file's current contents
   const fileContent = await readFile(path, "utf8");
