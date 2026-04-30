@@ -19,8 +19,6 @@ export default async (step: PatchJsonStep, variables: Variable[]) => {
   const operation = step.operation;
   const jsonPath = step.jsonPath;
 
-  console.log("Step.value:", step.value);
-
   // Has to be done this way, because value isn't just a string but a json object. This way, every part of the object can have variables in it
   const value = step.value
     ? JSON.parse(
@@ -81,7 +79,6 @@ const appendValueAtJsonPath = (
   jsonPath: string[],
   value: unknown,
 ): unknown => {
-  console.log(`Value: ${JSON.stringify(value)}`);
   if (typeof jsonPath[0] !== "string")
     throw new Error("jsonPath has to be an array of strings");
   if (isRecord(json)) {
@@ -114,7 +111,19 @@ const appendValueAtJsonPath = (
 };
 
 const removeValueAtJsonPath = (json: unknown, jsonPath: string[]): unknown => {
-  return json;
+  if (typeof jsonPath[0] !== "string")
+    throw new Error("jsonPath has to be an array of strings");
+  if (isRecord(json)) {
+    if (jsonPath.length > 1) {
+      json[jsonPath[0]] = removeValueAtJsonPath(
+        json[jsonPath[0]],
+        jsonPath.slice(1),
+      );
+      return json;
+    }
+    delete json[jsonPath[0]];
+    return json;
+  }
 };
 
 function isRecord(check: unknown): check is Record<string, unknown> {

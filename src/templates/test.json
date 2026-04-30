@@ -14,9 +14,8 @@
     {
       "type": "patch-json",
       "path": "example.json",
-      "operation": "append",
-      "jsonPath": ["someObject"],
-      "value": { "newNestedKey": "newNestedValue" }
+      "operation": "remove",
+      "jsonPath": ["someObject"]
     },
     {
       "type": "run",
