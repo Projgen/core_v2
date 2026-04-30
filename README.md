@@ -226,16 +226,42 @@ Template Step Example
 }
 ```
 
+You can also access a index of an array by just using the index as a string.
+
+```json
+{
+  "arr": [
+    {
+      "something": "a thing",
+      "someObject": { "oneAttribute": "Some wrong thing" }
+    },
+    { "something": "another thing" }
+  ]
+}
+```
+
+```json
+{
+  "type": "patch-json",
+  "path": "example.json",
+  "operation": "set",
+  "jsonPath": ["arr", "0", "someObject", "oneAttribute"],
+  "value": "Some right thing"
+}
+```
+
+This would turn `"Some wrong thing"` into `"Some right thing"`
+
 To access the `test` property inside that example JSON, use `jsonPath: ["scripts", "test"]`. That points to `package.json.scripts.test`.
 
-| Parameter   | Required   | Description                                          |
-| ----------- | ---------- | ---------------------------------------------------- |
-| `type`      | Required   | Is `run` to define Run step                          |
-| `when`      | Optional   | Any potential conditionals                           |
-| `path`      | Required   | Path to json file to patch                           |
-| `operation` | Required   | The operation to perform (mentioned above)           |
-| `jsonPath`  | Required   | The "json path" to the entry to change (see example) |
-| `value`     | Optional\* | The value to insert                                  |
+| Parameter   | Required   | Description                                           |
+| ----------- | ---------- | ----------------------------------------------------- |
+| `type`      | Required   | Is `run` to define Run step                           |
+| `when`      | Optional   | Any potential conditionals                            |
+| `path`      | Required   | Path to json file to patch                            |
+| `operation` | Required   | The operation to perform (mentioned above)            |
+| `jsonPath`  | Required   | The "json path" to the entry to change (see example). |
+| `value`     | Optional\* | The value to insert                                   |
 
 \*`value` is required for set and append, but will be ignored for remove
 
