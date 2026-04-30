@@ -7,28 +7,20 @@
   "variables": [],
   "steps": [
     {
-      "type": "run",
-      "command": "ping google.com"
-    },
-    {
       "type": "write",
-      "path": "temp.txt",
-      "content": "Hello, World!"
+      "path": "example.json",
+      "content": "{\"someKey\": \"someValue\", \"someObject\": {\"nestedArray\": [\"nestedValue1\", {\"deeplyNestedKey\": \"deeplyNestedValue\"}]}}"
+    },
+    {
+      "type": "patch-json",
+      "path": "example.json",
+      "operation": "append",
+      "jsonPath": ["someObject"],
+      "value": { "newNestedKey": "newNestedValue" }
     },
     {
       "type": "run",
-      "command": "type temp.txt"
-    },
-    {
-      "type": "patch-text",
-      "path": "temp.txt",
-      "find": "Hello",
-      "operation": "replace",
-      "content": "Goodbye"
-    },
-    {
-      "type": "run",
-      "command": "type temp.txt"
+      "command": "type example.json"
     }
   ]
 }

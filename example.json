@@ -1,0 +1,14 @@
+{
+  "someKey": "someValue",
+  "someObject": {
+    "nestedArray": [
+      "nestedValue1",
+      {
+        "deeplyNestedKey": "deeplyNestedValue"
+      }
+    ],
+    "value": {
+      "newNestedKey": "newNestedValue"
+    }
+  }
+}

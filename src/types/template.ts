@@ -1,7 +1,14 @@
 import * as z from "zod";
 
 export const JsonValueSchema: z.ZodType = z.lazy(() =>
-  z.union([z.string(), z.number(), z.boolean(), z.null()]),
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.null(),
+    z.array(JsonValueSchema),
+    z.record(z.string(), JsonValueSchema),
+  ]),
 );
 
 export const StepConditionSchema = z.object({
