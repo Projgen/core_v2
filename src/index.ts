@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// TODO: Add linting and script for linting 'npm run lint'
-
 import path from "node:path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
@@ -9,36 +7,10 @@ import fs from "node:fs";
 import { tryCatchSync } from "./utils/tryCatch.ts";
 import { type Template, TemplateSchema } from "./types/template.ts";
 import { scaffoldFromTemplate } from "./core/templatingEngine.ts";
+import { getTemplatePathFromRegistry } from "./core/registryEngine.ts";
+import { getConfigDir } from "./utils/getConfigDir.ts";
 
-// Checks if templatePath is valid and returns template if it is, otherwise throws an error
-const verifyTemplatePath = (inputPath: string): string => {
-  // get absolute path to the template file
-  const templatePath = path.resolve(process.cwd(), inputPath);
-
-  // check if file is a json
-  if (path.extname(templatePath) !== ".json") {
-    throw new Error("Error: Template file must be a JSON file.");
-  }
-
-  // make sure file exists
-  const templateExists = fs.existsSync(templatePath);
-  if (!templateExists) {
-    throw new Error("Error: Template file not found.");
-  }
-
-  // read the template file
-  const templateContent = fs.readFileSync(templatePath, "utf-8");
-
-  // parse the template file
-  const templateData = tryCatchSync(() => JSON.parse(templateContent));
-
-  if (templateData.error) {
-    throw new Error("Error: Failed to parse template file.");
-  }
-  return templateData.data;
-};
-
-const validateTemplate = (template: string): Template => {
+const validateTemplate = (template: unknown): Template => {
   const validationResult = TemplateSchema.safeParse(template);
 
   if (!validationResult.success) {
@@ -50,24 +22,73 @@ const validateTemplate = (template: string): Template => {
   return validationResult.data;
 };
 
-const main = (template: string) => {
-  const templateData = tryCatchSync(() => verifyTemplatePath(template));
+const getTemplateFromPath = async (
+  templatePath: string,
+): Promise<Template | null> => {
+  const absolutePath = path.resolve(process.cwd(), templatePath);
+
+  console.log(`Checking for template at ${absolutePath}`);
+
+  if (!fs.existsSync(absolutePath)) {
+    return null;
+  }
+
+  const templateContent = fs.readFileSync(absolutePath, "utf-8");
+  const templateData = tryCatchSync(() => JSON.parse(templateContent));
 
   if (templateData.error) {
-    console.error(templateData.error.message);
-    process.exit(1);
+    return null;
   }
 
   const validatedTemplate = tryCatchSync(() =>
     validateTemplate(templateData.data),
   );
-
   if (validatedTemplate.error) {
-    console.error(validatedTemplate.error.message);
-    process.exit(1);
+    return null;
   }
 
-  scaffoldFromTemplate(validatedTemplate.data);
+  return validatedTemplate.data;
+};
+
+// Checks if templatePath is valid and returns template if it is, otherwise throws an error
+const getTemplate = async (inputPath: string): Promise<Template | null> => {
+  // First check if the inputPath is a valid path to a template file
+  const templateFromPath = await getTemplateFromPath(inputPath);
+
+  if (templateFromPath) {
+    return templateFromPath;
+  }
+
+  // If not, check if it's an alias in the registry
+  const registryTemplatePath = await getTemplatePathFromRegistry(inputPath);
+  if (registryTemplatePath) {
+    const absoluteRegistryTemplatePath = path.resolve(
+      getConfigDir(),
+      registryTemplatePath,
+    );
+    const templateFromRegistryPath = await getTemplateFromPath(
+      absoluteRegistryTemplatePath,
+    );
+    if (templateFromRegistryPath) {
+      return templateFromRegistryPath;
+    }
+  }
+
+  throw new Error(
+    `Error: Template not found at path "${inputPath}" or in registry with alias "${inputPath}".`,
+  );
+};
+
+const main = async (templateArg: string) => {
+  const template = await getTemplate(templateArg);
+
+  if (!template) {
+    throw new Error(
+      `Error: Template not found at path "${templateArg}" or in registry with alias "${templateArg}".`,
+    );
+  }
+
+  await scaffoldFromTemplate(template);
 };
 
 yargs()
@@ -83,8 +104,8 @@ yargs()
         describe: "Path to the template file",
       });
     },
-    handler: (argv) => {
-      main(argv.templatePath as string);
+    handler: async (argv) => {
+      await main(argv.templatePath as string);
     },
   })
   .help()
