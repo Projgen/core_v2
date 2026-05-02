@@ -7,7 +7,10 @@ import fs from "node:fs";
 import { tryCatchSync } from "./utils/tryCatch.ts";
 import { type Template, TemplateSchema } from "./types/template.ts";
 import { scaffoldFromTemplate } from "./core/templatingEngine.ts";
-import { getTemplatePathFromRegistry } from "./core/registryEngine.ts";
+import {
+  addTemplateToRegistry,
+  getTemplatePathFromRegistry,
+} from "./core/registryEngine.ts";
 import { getConfigDir } from "./utils/getConfigDir.ts";
 
 const validateTemplate = (template: unknown): Template => {
@@ -26,8 +29,6 @@ const getTemplateFromPath = async (
   templatePath: string,
 ): Promise<Template | null> => {
   const absolutePath = path.resolve(process.cwd(), templatePath);
-
-  console.log(`Checking for template at ${absolutePath}`);
 
   if (!fs.existsSync(absolutePath)) {
     return null;
@@ -62,13 +63,8 @@ const getTemplate = async (inputPath: string): Promise<Template | null> => {
   // If not, check if it's an alias in the registry
   const registryTemplatePath = await getTemplatePathFromRegistry(inputPath);
   if (registryTemplatePath) {
-    const absoluteRegistryTemplatePath = path.resolve(
-      getConfigDir(),
-      registryTemplatePath,
-    );
-    const templateFromRegistryPath = await getTemplateFromPath(
-      absoluteRegistryTemplatePath,
-    );
+    const templateFromRegistryPath =
+      await getTemplateFromPath(registryTemplatePath);
     if (templateFromRegistryPath) {
       return templateFromRegistryPath;
     }
@@ -106,6 +102,31 @@ yargs()
     },
     handler: async (argv) => {
       await main(argv.templatePath as string);
+    },
+  })
+  .command({
+    command: "add [templatePath] [alias]",
+    describe: "Add a template to the registry",
+    aliases: ["a"],
+    builder: (yargs) => {
+      return yargs
+        .positional("templatePath", {
+          type: "string",
+          describe: "Path to the template file",
+        })
+        .positional("alias", {
+          type: "string",
+          describe: "Alias to refer to the template by in the registry",
+        });
+    },
+    handler: async (argv) => {
+      const template = await getTemplateFromPath(argv.templatePath as string);
+      if (!template) {
+        throw new Error(
+          `Error: Template not found at path "${argv.templatePath}".`,
+        );
+      }
+      await addTemplateToRegistry(template, argv.alias as string);
     },
   })
   .help()
