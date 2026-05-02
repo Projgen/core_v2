@@ -6,3 +6,5 @@
 ### Features
 
 * add GitHub Actions workflow for automated releases ([99e946f](https://github.com/Projgen/core_v2/commit/99e946f6262e684bc40903c058264b9b0861063f))
+* add Template Registry
+* add `projgen add` command to add a template to registry
