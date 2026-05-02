@@ -16,14 +16,13 @@ npx @projgen/cli create ./my-template.json
 
 ## Usage
 
+### Create
+
 ```bash
 projgen create [templatePath]
 ```
 
-| Alias | Description            |
-| ----- | ---------------------- |
-| `c`   | Shorthand for `create` |
-| `cr`  | Shorthand for `create` |
+Aliases: `projgen c` `projgen cr`
 
 **Example:**
 
@@ -32,6 +31,34 @@ projgen create ./templates/test.json
 ```
 
 Projgen will validate the template, prompt you for any defined variables, and then execute all steps in order.
+
+### Add
+
+Used to add a template to the local registry.
+
+```bash
+projgen add [templatePath] [alias]
+```
+
+Aliases: `projgen a`
+
+| parameter    | description                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| templatePath | the path to a json file containing the template                                          |
+| alias        | a optional property to define the alias used to reference the template in the cr command |
+
+If no alias is provided, template.id is used.
+
+This command fails if the alias is already getting used in the registry or if there is already a template with the same id.
+-> Templates are stored in a file with template.id as filename, that's why you can't have duplicate ids.
+
+**Example:**
+
+```bash
+projgen add ./some-template.json myTemplate
+```
+
+now the template in some-template.json can be run using `projgen c myTemplate`
 
 ## Template Structure
 
