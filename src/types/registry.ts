@@ -19,7 +19,7 @@ export const registrySchema = z
     for (const [index, template] of registry.templates.entries()) {
       if (seen.has(template.alias)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: `Duplicate alias: ${template.alias}`,
           path: ["templates", index, "alias"],
         });
