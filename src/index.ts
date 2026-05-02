@@ -11,7 +11,6 @@ import {
   addTemplateToRegistry,
   getTemplatePathFromRegistry,
 } from "./core/registryEngine.ts";
-import { getConfigDir } from "./utils/getConfigDir.ts";
 
 const validateTemplate = (template: unknown): Template => {
   const validationResult = TemplateSchema.safeParse(template);
