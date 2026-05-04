@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/Projgen/core_v2/compare/v2.0.3...v2.0.4) (2026-05-04)
+
+
+### Bug Fixes
+
+* update release workflow and package.json for improved npm publish process ([97e34c1](https://github.com/Projgen/core_v2/commit/97e34c1536718aab5e755f424180268daecd0666))
+
 ## [2.0.3](https://github.com/Projgen/core_v2/compare/v2.0.2...v2.0.3) (2026-05-04)
 
 
