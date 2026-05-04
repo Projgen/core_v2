@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/Projgen/core_v2/compare/v2.0.1...v2.0.2) (2026-05-04)
+
+
+### Bug Fixes
+
+* update npm publish command and adjust package.json for build process ([16f887a](https://github.com/Projgen/core_v2/commit/16f887a9eb27fa697356110fa5c0b7ce7bdbd6f9))
+
 ## [2.0.1](https://github.com/Projgen/core_v2/compare/v2.0.0...v2.0.1) (2026-05-04)
 
 
