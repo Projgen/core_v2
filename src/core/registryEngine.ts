@@ -23,7 +23,13 @@ const ensureRegistryExists = async (): Promise<void> => {
     await fs.writeFile(
       registryPath,
       JSON.stringify(
-        { version: REGISTRY_ENGINE_VERSION, templates: [] },
+        {
+          version: REGISTRY_ENGINE_VERSION,
+          templates: [],
+          linkedRegistries: [
+            "https://raw.githubusercontent.com/Projgen/templates/refs/heads/main/registry.json",
+          ],
+        },
         null,
         2,
       ),
