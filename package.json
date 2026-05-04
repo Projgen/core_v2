@@ -9,8 +9,13 @@
   ],
   "type": "module",
   "main": "./dist/index.js",
+  "bin": {
+    "projgen": "dist/index.js"
+  },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"
@@ -47,8 +52,5 @@
     "inquirer": "^13.4.2",
     "yargs": "^18.0.0",
     "zod": "^4.3.6"
-  },
-  "bin": {
-    "projgen": "./dist/index.js"
   }
 }
