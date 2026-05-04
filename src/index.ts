@@ -4,9 +4,12 @@ import path from "node:path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import fs from "node:fs";
-import { tryCatchSync } from "./utils/tryCatch.ts";
+import { tryCatch, tryCatchSync } from "./utils/tryCatch.ts";
 import { type Template, TemplateSchema } from "./types/template.ts";
-import { scaffoldFromTemplate } from "./core/templatingEngine.ts";
+import {
+  getTemplateEngineVersion,
+  scaffoldFromTemplate,
+} from "./core/templatingEngine.ts";
 import {
   addTemplateToRegistry,
   getTemplatePathFromRegistry,
@@ -43,8 +46,11 @@ const getTemplateFromPath = async (
   const validatedTemplate = tryCatchSync(() =>
     validateTemplate(templateData.data),
   );
+
   if (validatedTemplate.error) {
-    return null;
+    throw new Error(
+      `Error: Invalid template file at path "${templatePath}". ${validatedTemplate.error.message}`,
+    );
   }
 
   return validatedTemplate.data;
@@ -62,11 +68,15 @@ const getTemplate = async (inputPath: string): Promise<Template | null> => {
   // If not, check if it's an alias in the registry
   const registryTemplatePath = await getTemplatePathFromRegistry(inputPath);
   if (registryTemplatePath) {
-    const templateFromRegistryPath =
-      await getTemplateFromPath(registryTemplatePath);
-    if (templateFromRegistryPath) {
-      return templateFromRegistryPath;
+    const templateFromRegistryPath = await tryCatch(
+      getTemplateFromPath(registryTemplatePath),
+    );
+
+    if (templateFromRegistryPath.error) {
+      throw new Error(templateFromRegistryPath.error.message);
     }
+
+    return templateFromRegistryPath.data;
   }
 
   throw new Error(
@@ -74,12 +84,18 @@ const getTemplate = async (inputPath: string): Promise<Template | null> => {
   );
 };
 
-const main = async (templateArg: string) => {
+const create = async (templateArg: string) => {
   const template = await getTemplate(templateArg);
 
   if (!template) {
     throw new Error(
       `Error: Template not found at path "${templateArg}" or in registry with alias "${templateArg}".`,
+    );
+  }
+
+  if (template.engineVersion !== getTemplateEngineVersion()) {
+    throw new Error(
+      `Error: Template version ${template.engineVersion} is not compatible with template engine version ${getTemplateEngineVersion()}.`,
     );
   }
 
@@ -100,7 +116,7 @@ yargs()
       });
     },
     handler: async (argv) => {
-      await main(argv.templatePath as string);
+      await create(argv.templatePath as string);
     },
   })
   .command({
