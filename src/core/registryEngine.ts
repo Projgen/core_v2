@@ -4,7 +4,7 @@ import { type Registry, registrySchema } from "../types/registry.ts";
 import { getConfigDir } from "../utils/getConfigDir.ts";
 import type { Template } from "../types/template.ts";
 
-const REGISTRY_VERSION = 1;
+const REGISTRY_ENGINE_VERSION = 1;
 
 const getRegistryPath = (): string => {
   return path.join(getConfigDir(), "registry.json");
@@ -22,7 +22,11 @@ const ensureRegistryExists = async (): Promise<void> => {
   } catch {
     await fs.writeFile(
       registryPath,
-      JSON.stringify({ version: REGISTRY_VERSION, templates: [] }, null, 2),
+      JSON.stringify(
+        { version: REGISTRY_ENGINE_VERSION, templates: [] },
+        null,
+        2,
+      ),
       "utf8",
     );
   }
@@ -41,9 +45,9 @@ const loadRegistry = async (): Promise<Registry> => {
     );
   }
 
-  if (validationResult.data.version !== REGISTRY_VERSION) {
+  if (validationResult.data.version !== REGISTRY_ENGINE_VERSION) {
     throw new Error(
-      `Error: Unsupported registry version. Expected version ${REGISTRY_VERSION}.`,
+      `Error: Unsupported registry version. Expected version ${REGISTRY_ENGINE_VERSION}.`,
     );
   }
 
@@ -54,6 +58,7 @@ export const getTemplatePathFromRegistry = async (
   alias: string,
 ): Promise<string | null> => {
   const registry = await loadRegistry();
+
   const entry = registry.templates.find((template) => template.alias === alias);
 
   if (!entry) {
