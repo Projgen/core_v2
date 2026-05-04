@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/Projgen/core_v2/compare/v2.0.4...v2.1.0) (2026-05-04)
+
+
+### Features
+
+* support for external templates ([#43](https://github.com/Projgen/core_v2/issues/43)) ([fb7e1a2](https://github.com/Projgen/core_v2/commit/fb7e1a2b5dcd4b8262c17f0614ce1470a017cadd))
+
 ## [2.0.4](https://github.com/Projgen/core_v2/compare/v2.0.3...v2.0.4) (2026-05-04)
 
 
