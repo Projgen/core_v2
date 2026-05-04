@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/Projgen/core_v2/compare/v2.0.2...v2.0.3) (2026-05-04)
+
+
+### Bug Fixes
+
+* update Node.js version to 20 to (hopefully) fix failing workflow ([ca9df6e](https://github.com/Projgen/core_v2/commit/ca9df6e0d141d67ce6a426f402779968689bb2cc))
+
 ## [2.0.2](https://github.com/Projgen/core_v2/compare/v2.0.1...v2.0.2) (2026-05-04)
 
 
