@@ -12,6 +12,7 @@ export const registrySchema = z
   .object({
     version: z.number().int().positive(),
     templates: z.array(registryEntrySchema),
+    linkedRegistries: z.array(z.string()).optional(), // The paths / URLs to other registries to link to
   })
   .superRefine((registry, ctx) => {
     const seen = new Set<string>();
