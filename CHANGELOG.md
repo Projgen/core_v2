@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/Projgen/core_v2/compare/v2.1.0...v2.1.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* Minor fixes ([#46](https://github.com/Projgen/core_v2/issues/46)) ([5fb15ac](https://github.com/Projgen/core_v2/commit/5fb15ac7323609135158b5291687c0213fd26976))
+
 ## [2.1.0](https://github.com/Projgen/core_v2/compare/v2.0.4...v2.1.0) (2026-05-04)
 
 
