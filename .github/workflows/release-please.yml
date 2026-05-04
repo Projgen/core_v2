@@ -28,8 +28,17 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
+      - run: npm install -g npm@latest
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm --version
+        if: ${{ steps.release.outputs.release_created }}
+
       - run: npm ci
         if: ${{ steps.release.outputs.release_created }}
 
-      - run: npm publish --access public
+      - run: npm run build
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm publish --provenance
         if: ${{ steps.release.outputs.release_created }}
