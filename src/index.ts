@@ -214,7 +214,7 @@ const create = async (templateSource: string) => {
     const allowDownload = await prompter.promptForBoolean({
       name: "allowDownload",
       message: `Do you trust the author "${template.author}" of the template "${template.name}" from "${resolved.source}"${aliasContext}?`,
-      default: true,
+      default: false,
       type: "boolean",
     });
 
@@ -226,7 +226,7 @@ const create = async (templateSource: string) => {
       name: "saveToRegistry",
       message:
         "Do you want to save this template in your registry for later use?",
-      default: true,
+      default: false,
       type: "boolean",
     });
 
@@ -259,6 +259,7 @@ yargs()
       });
     },
     handler: async (argv) => {
+      console.clear();
       await create(argv.templatePath as string);
     },
   })
