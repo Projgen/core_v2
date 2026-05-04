@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/Projgen/core_v2/compare/v2.0.0...v2.0.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* add public access to npm publish command ([e7f9a1b](https://github.com/Projgen/core_v2/commit/e7f9a1b934c88acc36d06c2a2fa9a5c5277431ad))
+
 ## [2.0.0](https://github.com/Projgen/core_v2/compare/v1.1.0...v2.0.0) (2026-05-04)
 
 
