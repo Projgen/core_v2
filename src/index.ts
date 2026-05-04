@@ -259,6 +259,7 @@ yargs()
       });
     },
     handler: async (argv) => {
+      console.clear();
       await create(argv.templatePath as string);
     },
   })
